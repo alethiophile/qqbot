@@ -1,0 +1,13 @@
+This is the code which runs the qqbot vote and dice script in
+#questionablequesting.
+
+Dice are in dicebot.py, vote counting is in countbot.py. Both can theoretically
+function under multiple bot frameworks, but the recommended use is as a Willie
+module. default.cfg is a config file to make Willie use said modules. You should
+symlink the scripts into willie's module directory.
+
+They run in a Linux environment under Python 3. Any attempt to make them work
+somewhere else is the responsibility of the attempter.
+
+countbot is dependent on forum_archive, my forum interaction module. That's
+available under my Github. It has some dependencies itself. Look there.
