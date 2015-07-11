@@ -88,7 +88,7 @@ def count_votes(vclist):
     return voters, votes
 
 def format_count(votes):
-    out = ""
+    out = "[color=invisible]##### QQBot[/color]\n"
     for i in sorted(votes.keys()):
         out += "{}[X] {} {}: ({})\n".format('-' * i[1], len(votes[i]), i[0], ', '.join(votes[i]))
     return out
