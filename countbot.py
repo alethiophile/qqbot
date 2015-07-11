@@ -41,19 +41,22 @@ def get_posts(url, surl=None):
     result = result[fi:li]
     return result
 
-vote_re = re.compile(r"(?P<indent>[\s-]*)\[[Xx]\]\s*(?P<vote>.+)\s*")
-
+# Regular expressions for votes and tally indicators
+vote_re = re.compile(r"^(?P<indent>[\s-]*)\[[Xx]\]\s*(?P<vote>\S.*)")
+tally_re = re.compile(r"^#####")
+ 
 def get_votes(post):
     soup = BeautifulSoup(post['text'])
-    pl = elem_lines(soup)
+    pl = post_lines(soup)
+    
+    # If we encounter a tally post, skip processing the post entirely
+    tally_check = [m for l in pl for m in [tally_re.match(l)] if m ]
+    if len(tally_check) > 0:
+        return
+    
+    # Return each valid vote line
     for i in pl:
-        try:
-            if i.name:
-                continue
-        except AttributeError:
-            pass
-        o = vote_re.match(i)
-        if o:
+        if vote_re.match(i):
             yield i
 
 def count_votes(vclist):
@@ -85,35 +88,56 @@ def count_votes(vclist):
     return voters, votes
 
 def format_count(votes):
-    out = ""
+    out = "[color=invisible]##### QQBot[/color]\n"
     for i in sorted(votes.keys()):
         out += "{}[X] {} {}: ({})\n".format('-' * i[1], len(votes[i]), i[0], ', '.join(votes[i]))
     return out
 
-def elem_lines(post):
-    """Takes an element, lists off the text lines in it. Block-level elements (just
-    quotes, here) are yielded as soups; line breaks are removed, but delimit
-    elements; the results are strings which contain full lines as displayed in
-    the forum.
+def post_lines(post):
+    """ Takes a post of tag soup, removes any unwanted tags, then gets all the text
+    of the post and breaks it into a list of individual lines.
 
     """
-    accum = ''
-    post = post.body
-    for i in post.children:
+    post = clean_post(post)
+    one_long_line = get_lines_rec(post)
+    all_post_lines = [s.strip() for s in one_long_line.splitlines() if s.strip() != ""]
+    return all_post_lines
+
+def get_lines_rec(tag, accum=''):
+    """ Takes a post of tag soup, and recursively extracts the text from
+    all the tags (skipping blockquotes).
+    Line endings are added where appropriate, but not duplicated.
+    The result should be a string containing all the text of the post in lines matching
+    what was displayed in the forum.
+    """
+    for i in tag.children:
         if i.name == 'blockquote':
-            yield i
+            continue
         elif i.name == 'ul':
+            accum += "\n"
             for n in i.children:
-                #yield "[X]" + n.get_text()
-                yield n.get_text()
-        elif i.name != 'br':
-            accum += str(i)
+                accum = get_lines_rec(n, accum)
+                accum += "\n"
+        elif i.name == 'br':
+            if not accum.endswith("\n"):
+                accum += "\n"
+        elif hasattr(i, "contents"):
+            accum = get_lines_rec(i, accum)
         else:
-            if len(accum) > 0:
-                yield accum
-            accum = ''
-    if len(accum) > 0:
-        yield accum
+            accum += str(i)
+    return accum
+
+# Clean the post of any unwanted tags
+def clean_post(post):
+    # Remove any strike-through spans
+    strikes = post.find_all(is_strike_span)
+    for s in strikes:
+        s.clear()
+    return post
+
+def is_strike_span(tag):
+    return tag.name == "span" and tag.has_attr('style') and re.match(r'text-decoration:\s*line-through', tag["style"])
+    
 
 def pastebin_paste(text):
     r = urllib.request.urlopen('http://pastebin.com/api/api_post.php', 
