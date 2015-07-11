@@ -41,8 +41,10 @@ def get_posts(url, surl=None):
     result = result[fi:li]
     return result
 
-vote_re = re.compile(r"(?P<indent>[\s-]*)\[[Xx]\]\s*(?P<vote>.+)\s*")
-
+# Regular expressions for votes and tally indicators
+vote_re = re.compile(r"^(?P<indent>[\s-]*)\[[Xx]\]\s*(?P<vote>\S.*)")
+tally_re = re.compile(r"^#####")
+ 
 def get_votes(post):
     soup = BeautifulSoup(post['text'])
     pl = elem_lines(soup)
