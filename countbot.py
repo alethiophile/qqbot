@@ -273,7 +273,7 @@ try:
             bot.say("No manual entry for qqbot")
 
 except AttributeError:
-    pass
+    print("willie error (ignoring)")
 
 if __name__=="__main__":
     main()
