@@ -272,8 +272,11 @@ def willieroll(bot, trigger):
 
 @sopel.module.commands("choose")
 def williechoose(bot, trigger):
-    chstr = trigger.group(2)
-    choices = [i.strip() for i in chstr.split(',')]
+    try:
+        chstr = trigger.group(2)
+        choices = [i.strip() for i in chstr.split(',')]
+    except:
+        return
     if len(choices) == 0:
         return
     choice = random.choice(choices)
