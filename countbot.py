@@ -10,9 +10,9 @@ import urllib.request, urllib.parse, http.cookiejar
 import re, hashlib, sys, argparse
 
 try:
-    import willie
+    import sopel
 except ImportError:
-    willie = None
+    sopel = None
 
 plink_re = re.compile(r"(https?://)?forum.questionablequesting.com/threads/(.*\.)?(?P<tid>\d+)/(page-(?P<pnum>\d+))?(#post-(?P<pid>\d+))?")
 pagelink = "http://forum.questionablequesting.com/threads/{tid}/page-{pnum}"
@@ -240,7 +240,7 @@ def setup(bot):
     pastebin_user_key = bot.config.qqbot.pastebin_user_key
 
 try:
-    @willie.module.commands("votes")
+    @sopel.module.commands("votes")
     def williecount(bot, trigger):
         try:
             args = trigger.group(2).split()
@@ -263,7 +263,7 @@ try:
             bot.say("Couldn't access QQ")
             raise
 
-    @willie.module.commands("man")
+    @sopel.module.commands("man")
     def willieman(bot, trigger):
         try:
             args = trigger.group(2).split()

@@ -25,7 +25,7 @@ import argparse, signal, itertools
 
 # Includes for use as willie module
 
-import willie
+import sopel
 
 random = random.SystemRandom()
 
@@ -251,7 +251,7 @@ def action(server, message, rnick, address, target):
 def setup(bot):
     signal.signal(signal.SIGALRM, alarm_handler)
 
-@willie.module.commands("roll")
+@sopel.module.commands("roll")
 def willieroll(bot, trigger):
     try:
         dicestr = trigger.group(2).split()[0]
@@ -270,7 +270,7 @@ def willieroll(bot, trigger):
         signal.alarm(0)
         return
 
-@willie.module.commands("choose")
+@sopel.module.commands("choose")
 def williechoose(bot, trigger):
     chstr = trigger.group(2)
     choices = [i.strip() for i in chstr.split(',')]
@@ -280,7 +280,7 @@ def williechoose(bot, trigger):
     choice = re.sub("(babe)l(bot)", lambda x: x.group(1) + x.group(2), choice, flags=re.I)
     bot.say("{} selects: {}".format(trigger.nick, choice))
 
-@willie.module.commands("draw")
+@sopel.module.commands("draw")
 def williedraw(bot, trigger):
     try:
         args = trigger.group(2).split()
