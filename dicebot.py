@@ -174,10 +174,10 @@ class Dicebot(SingleServerIRCBot):
                     self.connection.privmsg(nick, i)
             else:
                 try:
-                    signal.alarm(10)
+                    #signal.alarm(10)
                     nd, si, rs = do_roll(roll)
                     self.connection.privmsg(sendto, "{} rolled {}d{}: {}".format(nick, nd, si, ", ".join(rs)))
-                    signal.alarm(0)
+                    #signal.alarm(0)
                 except (MemoryError, irc.client.MessageTooLong, AlarmException):
                     self.connection.privmsg(sendto, "Stop being an asshole.")
                     signal.alarm(0)
@@ -258,16 +258,16 @@ def willieroll(bot, trigger):
     except:
         return
     try:
-        signal.alarm(10)
+        #signal.alarm(10)
         nd, si, rs = do_roll(dicestr)
         bot.say("{} rolled {}d{}: {}".format(trigger.nick, nd, si, ", ".join(rs)))
-        signal.alarm(0)
-    except (MemoryError, irc.client.MessageTooLong, AlarmException):
+        #signal.alarm(0)
+    except (MemoryError, AlarmException):
         bot.say("Stop being an asshole.")
-        signal.alarm(0)
+        #signal.alarm(0)
         return
     except: # if roll failed
-        signal.alarm(0)
+        #signal.alarm(0)
         return
 
 @sopel.module.commands("choose")
