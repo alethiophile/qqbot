@@ -46,7 +46,7 @@ vote_re = re.compile(r"^(?P<indent>[\s-]*)\[[Xx]\]\s*(?P<vote>\S.*)")
 tally_re = re.compile(r"^#####")
  
 def get_votes(post):
-    soup = BeautifulSoup(post['text'])
+    soup = BeautifulSoup(post['text'], "html5lib")
     pl = post_lines(soup)
     
     # If we encounter a tally post, skip processing the post entirely
