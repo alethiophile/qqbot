@@ -19,7 +19,7 @@ try:
     from irc.bot import SingleServerIRCBot
     import irc.client
 except ImportError:
-    pass
+    SingleServerIRCBot = object
 import re, random, sys, time
 import argparse, signal, itertools
 
